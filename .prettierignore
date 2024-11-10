@@ -1,0 +1,9 @@
+
+# Ignore all HTML files:
+node_modules
+dist
+.git
+package-lock.json
+package.json
+README.md
+tsconfig.json
