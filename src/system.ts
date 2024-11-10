@@ -61,11 +61,7 @@ export function install() {
     execSync(`${packageManager} install`, { stdio: 'inherit' });
 }
 
-function detectPackageManager() {
-    const dependencyManager = getDependencyManager();
-}
-
-const getDependencyManager = (currentDir: string = './', depth: number = 0) => {
+const detectPackageManager = (currentDir: string = './', depth: number = 0) => {
     if (depth > 20) {
         throw new Error('No lock file found');
     }
@@ -83,12 +79,23 @@ const getDependencyManager = (currentDir: string = './', depth: number = 0) => {
     );
 
     if (foundLockFiles.length === 0) {
-        return getDependencyManager(resolve(currentDir, '..'));
+        return detectPackageManager(resolve(currentDir, '..'), depth + 1);
     }
 
     if (foundLockFiles.length > 1) {
         throw new Error('Multiple lock files found');
     }
     const foundLock = foundLockFiles[0] as string;
-    return foundLock.split('.')[0];
+
+    if (foundLock === 'yarn.lock') {
+        return 'yarn';
+    } else if (foundLock === 'package-lock.json') {
+        return 'npm';
+    } else if (foundLock === 'pnpm-lock.yaml') {
+        return 'pnpm';
+    } else if (foundLock === 'bun.lock') {
+        return 'bun';
+    }
+
+    throw new Error('Unknown lock file');
 };

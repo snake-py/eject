@@ -2,6 +2,7 @@ import { cac } from 'cac';
 
 import { eject } from './command.js';
 import { config } from './config.js';
+import { execSync } from 'child_process';
 
 const cli = cac('eject');
 
