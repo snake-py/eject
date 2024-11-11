@@ -81,15 +81,17 @@ export function detectPackageManager(currentDir: string = './', depth: number = 
         throw new Error('Multiple lock files found');
     }
 
-    const foundLock = foundLockFiles[0] as string;
-    if (foundLock === 'yarn.lock') {
-        return 'yarn';
-    } else if (foundLock === 'package-lock.json') {
-        return 'npm';
-    } else if (foundLock === 'pnpm-lock.yaml') {
-        return 'pnpm';
-    } else if (foundLock === 'bun.lock') {
-        return 'bun';
+    const lockFile = foundLockFiles[0] as string;
+    let packageManager: string | undefined
+    if (lockFile === 'yarn.lock') {
+        packageManager = 'yarn';
+    } else if (lockFile === 'package-lock.json') {
+        packageManager = 'npm';
+    } else if (lockFile === 'pnpm-lock.yaml') {
+        packageManager = 'pnpm';
+    } else if (lockFile === 'bun.lock') {
+        packageManager = 'bun';
     }
-    assert(false)
+    assert(lockFile)
+    return { packageManager, lockFile }
 }

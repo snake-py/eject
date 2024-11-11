@@ -53,11 +53,11 @@ export function eject(
     }
     updatePackageJson(successFullEjections);
     commitEjection(config.COMMIT_MESSAGE);
-    const packageManager = detectPackageManager()
+    const { packageManager, lockFile } = detectPackageManager()
     const installCmd = `${packageManager} install`
     const installLog = chalk.bold(installCmd)
     console.log(
-        `📦 Running ${installLog} (you can skip this e.g. with ${chalk.bold('Ctrl + C')})`,
+        `📦 Running ${installLog} to update ${lockFile}`
     );
     execSync(installCmd, { stdio: 'inherit' });
     console.log(`✅ ${installLog} done`);
