@@ -51,10 +51,10 @@ export function eject(
         console.log('❌ Ejected dependencies: ', chalk.bold(failedEjections));
     }
     updatePackageJson(successFullEjections);
+    commitEjection(config.COMMIT_MESSAGE);
     console.log(
         `📦 Installing dependencies (you can skip this e.g. with ${chalk.bold('Ctrl + C')})`,
     );
-    commitEjection(config.COMMIT_MESSAGE);
     install();
     console.log('✅ Install done');
     amendCommit(config.COMMIT_MESSAGE);
