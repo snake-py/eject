@@ -57,7 +57,7 @@ export function eject(
     );
     install();
     console.log('✅ Install done');
-    amendCommit(config.COMMIT_MESSAGE);
+    amendCommit();
     console.log(
         '➡️  Run',
         chalk.bold('git show HEAD'),
