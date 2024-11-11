@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import fs from 'fs';
-import assert from 'assert'
+import assert from 'assert';
 
 export function updatePackageJson(successFullEjections: string[]) {
     const packageJson = JSON.parse(
@@ -56,7 +56,10 @@ export function copyDependency(dependency: string) {
     });
 }
 
-export function detectPackageManager(currentDir: string = './', depth: number = 0) {
+export function detectPackageManager(
+    currentDir: string = './',
+    depth: number = 0,
+) {
     if (depth > 20) {
         throw new Error('No lock file found');
     }
@@ -82,7 +85,7 @@ export function detectPackageManager(currentDir: string = './', depth: number = 
     }
 
     const lockFile = foundLockFiles[0] as string;
-    let packageManager: string | undefined
+    let packageManager: string | undefined;
     if (lockFile === 'yarn.lock') {
         packageManager = 'yarn';
     } else if (lockFile === 'package-lock.json') {
@@ -92,6 +95,6 @@ export function detectPackageManager(currentDir: string = './', depth: number = 
     } else if (lockFile === 'bun.lock') {
         packageManager = 'bun';
     }
-    assert(lockFile)
-    return { packageManager, lockFile }
+    assert(lockFile);
+    return { packageManager, lockFile };
 }

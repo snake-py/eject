@@ -7,8 +7,12 @@ import {
     isGitInstalled,
 } from './git.js';
 import { errorLog, infoLog, warnLog } from './log.js';
-import { copyDependency, detectPackageManager, updatePackageJson } from './system.js';
-import {execSync} from 'child_process';
+import {
+    copyDependency,
+    detectPackageManager,
+    updatePackageJson,
+} from './system.js';
+import { execSync } from 'child_process';
 
 export function eject(
     dependencies: string[],
@@ -53,12 +57,10 @@ export function eject(
     }
     updatePackageJson(successFullEjections);
     commitEjection(config.COMMIT_MESSAGE);
-    const { packageManager, lockFile } = detectPackageManager()
-    const installCmd = `${packageManager} install`
-    const installLog = chalk.bold(installCmd)
-    console.log(
-        `📦 Running ${installLog} to update ${lockFile}`
-    );
+    const { packageManager, lockFile } = detectPackageManager();
+    const installCmd = `${packageManager} install`;
+    const installLog = chalk.bold(installCmd);
+    console.log(`📦 Running ${installLog} to update ${lockFile}`);
     execSync(installCmd, { stdio: 'inherit' });
     console.log(`✅ ${installLog} done`);
     amendCommit();
