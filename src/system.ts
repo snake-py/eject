@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import fs from 'fs';
-import { execSync } from 'child_process';
+import assert from 'assert'
 
 export function updatePackageJson(successFullEjections: string[]) {
     const packageJson = JSON.parse(
@@ -80,8 +80,8 @@ export function detectPackageManager(currentDir: string = './', depth: number = 
     if (foundLockFiles.length > 1) {
         throw new Error('Multiple lock files found');
     }
-    const foundLock = foundLockFiles[0] as string;
 
+    const foundLock = foundLockFiles[0] as string;
     if (foundLock === 'yarn.lock') {
         return 'yarn';
     } else if (foundLock === 'package-lock.json') {
@@ -91,6 +91,5 @@ export function detectPackageManager(currentDir: string = './', depth: number = 
     } else if (foundLock === 'bun.lock') {
         return 'bun';
     }
-
-    throw new Error('Unknown lock file');
+    assert(false)
 }
