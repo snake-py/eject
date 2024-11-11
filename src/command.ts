@@ -60,7 +60,7 @@ export function eject(
     const { packageManager, lockFile } = detectPackageManager();
     const installCmd = `${packageManager} install`;
     const installLog = chalk.bold(installCmd);
-    console.log(`📦 Running ${installLog} to update ${lockFile}`);
+    console.log(`📦 Running ${installLog} to update ${chalk.bold(lockFile)}`);
     execSync(installCmd, { stdio: 'inherit' });
     console.log(`✅ ${installLog} done`);
     amendCommit();
