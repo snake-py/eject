@@ -6,7 +6,7 @@ export function commitEjection(commitMessage: string = 'Eject dependencies') {
 }
 
 export function amendCommit() {
-    execSync('git add .');
+    execSync('git add -A');
     execSync(`git commit --amend --no-edit`);
 }
 
