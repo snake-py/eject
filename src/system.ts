@@ -95,6 +95,6 @@ export function detectPackageManager(
     } else if (lockFile === 'bun.lock') {
         packageManager = 'bun';
     }
-    assert(lockFile);
+    assert(packageManager);
     return { packageManager, lockFile };
 }
