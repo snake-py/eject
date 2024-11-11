@@ -52,7 +52,7 @@ export function eject(
     }
     updatePackageJson(successFullEjections);
     console.log(
-        `📦 Installing dependencies (if you want to skip this step, simply abort e.g. with ${chalk.bold('Ctrl + C')})`,
+        `📦 Installing dependencies (you can skip this e.g. with ${chalk.bold('Ctrl + C')})`,
     );
     commitEjection(config.COMMIT_MESSAGE);
     install();
