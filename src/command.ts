@@ -7,7 +7,8 @@ import {
     isGitInstalled,
 } from './git.js';
 import { errorLog, infoLog, warnLog } from './log.js';
-import { copyDependency, install, updatePackageJson } from './system.js';
+import { copyDependency, detectPackageManager, updatePackageJson } from './system.js';
+import {execSync} from 'child_process';
 
 export function eject(
     dependencies: string[],
@@ -52,11 +53,14 @@ export function eject(
     }
     updatePackageJson(successFullEjections);
     commitEjection(config.COMMIT_MESSAGE);
+    const packageManager = detectPackageManager()
+    const installCmd = `${packageManager} install`
+    const installLog = chalk.bold(installCmd)
     console.log(
-        `📦 Installing dependencies (you can skip this e.g. with ${chalk.bold('Ctrl + C')})`,
+        `📦 Running ${installLog} (you can skip this e.g. with ${chalk.bold('Ctrl + C')})`,
     );
-    install();
-    console.log('✅ Install done');
+    execSync(installCmd, { stdio: 'inherit' });
+    console.log(`✅ ${installLog} done`);
     amendCommit();
     console.log(
         '➡️  Run',

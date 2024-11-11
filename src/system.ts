@@ -56,12 +56,7 @@ export function copyDependency(dependency: string) {
     });
 }
 
-export function install() {
-    const packageManager = detectPackageManager();
-    execSync(`${packageManager} install`, { stdio: 'inherit' });
-}
-
-const detectPackageManager = (currentDir: string = './', depth: number = 0) => {
+export function detectPackageManager(currentDir: string = './', depth: number = 0) {
     if (depth > 20) {
         throw new Error('No lock file found');
     }
@@ -98,4 +93,4 @@ const detectPackageManager = (currentDir: string = './', depth: number = 0) => {
     }
 
     throw new Error('Unknown lock file');
-};
+}
