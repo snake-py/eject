@@ -30,7 +30,7 @@ function setPathAsVersion(
         if (!successFullEjections.includes(key)) {
             updatedDependencies[key] = dependencies[key] as string;
         } else {
-            updatedDependencies[key] = `file:./ejected/${key}`;
+            updatedDependencies[key] = `link:./ejected/${key}`;
         }
     }
     return updatedDependencies;
