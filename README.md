@@ -13,6 +13,7 @@ npx eject <dependency>
 
 1. Clone the repository
 2. Run `npm install`
+2. Run `npm build`
 3. Run `npm link`
 
 Now you can use `npx eject <dependency>` to eject the dependency from any other project.

@@ -40,7 +40,7 @@ export function eject(
     }
     if (successFullEjections.length > 0) {
         console.log(
-            '✅ Ejected dependencies: ',
+            '✅ Ejected dependencies:',
             chalk.bold(successFullEjections),
         );
     } else {
@@ -51,16 +51,16 @@ export function eject(
         console.log('❌ Ejected dependencies: ', chalk.bold(failedEjections));
     }
     updatePackageJson(successFullEjections);
-    console.log(
-        '📦 Installing dependencies (if you want to skip this step, simply abort e.g. with 𝗖𝘁𝗿𝗹 + 𝗖)',
-    );
     commitEjection(config.COMMIT_MESSAGE);
+    console.log(
+        `📦 Installing dependencies (you can skip this e.g. with ${chalk.bold('Ctrl + C')})`,
+    );
     install();
     console.log('✅ Install done');
-    amendCommit(config.COMMIT_MESSAGE);
+    amendCommit();
     console.log(
-        '➡️ Run ',
+        '➡️  Run',
         chalk.bold('git show HEAD'),
-        ' to see the ejected code',
+        'to see the ejected code',
     );
 }

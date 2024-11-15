@@ -1,14 +1,13 @@
 import { execSync } from 'child_process';
-import { infoLog, successLog } from './log.js';
 
 export function commitEjection(commitMessage: string = 'Eject dependencies') {
     execSync('git add .');
     execSync(`git commit -m "${commitMessage}"`);
 }
 
-export function amendCommit(commitMessage: string = 'Eject dependencies') {
-    execSync('git add .');
-    execSync(`git commit --amend -m "${commitMessage}"`);
+export function amendCommit() {
+    execSync('git add -A');
+    execSync(`git commit --amend --no-edit`);
 }
 
 export function isGitInstalled() {
