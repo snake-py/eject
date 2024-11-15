@@ -1,6 +1,6 @@
 {
   "name": "eject",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "This package helps you to eject dependencies from node_modules easily",
   "main": "index.js",
   "type": "module",
@@ -8,7 +8,11 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "vitest",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "release": "release-me patch",
+    "release:minor": "release-me minor",
+    "release:major": "release-me major",
+    "release:commit": "release-me commit"
   },
   "repository": {
     "type": "git",
@@ -28,6 +32,7 @@
     "chalk": "^5.3.0"
   },
   "devDependencies": {
+    "@brillout/release-me": "^0.4.2",
     "@types/node": "^22.9.0",
     "prettier": "^3.3.3",
     "typescript": "^5.6.3",
