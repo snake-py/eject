@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import fs from 'fs';
-import { execSync } from 'child_process';
+import assert from 'assert';
 
 export function updatePackageJson(successFullEjections: string[]) {
     const packageJson = JSON.parse(
@@ -56,12 +56,10 @@ export function copyDependency(dependency: string) {
     });
 }
 
-export function install() {
-    const packageManager = detectPackageManager();
-    execSync(`${packageManager} install`, { stdio: 'inherit' });
-}
-
-const detectPackageManager = (currentDir: string = './', depth: number = 0) => {
+export function detectPackageManager(
+    currentDir: string = './',
+    depth: number = 0,
+) {
     if (depth > 20) {
         throw new Error('No lock file found');
     }
@@ -85,17 +83,18 @@ const detectPackageManager = (currentDir: string = './', depth: number = 0) => {
     if (foundLockFiles.length > 1) {
         throw new Error('Multiple lock files found');
     }
-    const foundLock = foundLockFiles[0] as string;
 
-    if (foundLock === 'yarn.lock') {
-        return 'yarn';
-    } else if (foundLock === 'package-lock.json') {
-        return 'npm';
-    } else if (foundLock === 'pnpm-lock.yaml') {
-        return 'pnpm';
-    } else if (foundLock === 'bun.lock') {
-        return 'bun';
+    const lockFile = foundLockFiles[0] as string;
+    let packageManager: string | undefined;
+    if (lockFile === 'yarn.lock') {
+        packageManager = 'yarn';
+    } else if (lockFile === 'package-lock.json') {
+        packageManager = 'npm';
+    } else if (lockFile === 'pnpm-lock.yaml') {
+        packageManager = 'pnpm';
+    } else if (lockFile === 'bun.lock') {
+        packageManager = 'bun';
     }
-
-    throw new Error('Unknown lock file');
-};
+    assert(packageManager);
+    return { packageManager, lockFile };
+}
