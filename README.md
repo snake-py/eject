@@ -1,6 +1,6 @@
 # Eject
 
-This package is written to help you to eject your project from the current repository. It will copy all the files and folders to `ejected` folder and remove it from node_modules.
+This package is written to eject dependencies from your project. It will copy all the files and folders to an `ejected` folder and remove it from node_modules. It will automatically update the package.json file an link the dependencies to the ejected folder.
 
 
 ## Usage
