@@ -2,17 +2,17 @@ import { resolve } from 'path';
 import fs from 'fs';
 import assert from 'assert';
 
-export function updatePackageJson(successFullEjections: string[]) {
+export function updatePackageJson(ejectedDependency: string) {
     const packageJson = JSON.parse(
         fs.readFileSync(resolve('./package.json'), 'utf-8'),
     );
     packageJson['devDependencies'] = setPathAsVersion(
         packageJson['devDependencies'],
-        successFullEjections,
+        ejectedDependency,
     );
     packageJson['dependencies'] = setPathAsVersion(
         packageJson['dependencies'],
-        successFullEjections,
+        ejectedDependency,
     );
     fs.writeFileSync(
         resolve('./package.json'),
@@ -23,11 +23,11 @@ export function updatePackageJson(successFullEjections: string[]) {
 
 function setPathAsVersion(
     dependencies: Record<string, string>,
-    successFullEjections: string[],
+    ejectedDependency: string,
 ) {
     const updatedDependencies: Record<string, string> = {};
     for (const key in dependencies) {
-        if (!successFullEjections.includes(key)) {
+        if (ejectedDependency !== key) {
             updatedDependencies[key] = dependencies[key] as string;
         } else {
             updatedDependencies[key] = `link:./ejected/${key}`;
