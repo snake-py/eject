@@ -15,7 +15,7 @@ import {
 import { execSync } from 'child_process';
 
 export function eject(
-    dependencies: string[],
+    dependency: string,
     options: { force: boolean; verbose: boolean },
 ) {
     if (!options.force && !isGitInstalled()) {
@@ -30,32 +30,23 @@ export function eject(
         );
         return;
     }
-    const successFullEjections = [];
-    const failedEjections = [];
-    for (const dependency of dependencies) {
-        try {
-            copyDependency(dependency);
-            successFullEjections.push(dependency);
-        } catch (error) {
-            if (options.verbose) {
-                errorLog('Error ejecting dependency:', dependency);
-            }
-            failedEjections.push(dependency);
+    let successfulEjected = false;
+    try {
+        copyDependency(dependency);
+        successfulEjected = true;
+    } catch (error) {
+        if (options.verbose) {
+            errorLog('Error ejecting dependency:', dependency);
         }
     }
-    if (successFullEjections.length > 0) {
-        console.log(
-            '✅ Ejected dependencies:',
-            chalk.bold(successFullEjections),
-        );
+
+    if (successfulEjected) {
+        console.log('✅ Ejected dependencies:', chalk.bold(dependency));
     } else {
-        warnLog('No dependencies ejected');
+        console.log('❌ Ejected dependencies: ', chalk.bold(dependency));
         return;
     }
-    if (failedEjections.length > 0) {
-        console.log('❌ Ejected dependencies: ', chalk.bold(failedEjections));
-    }
-    updatePackageJson(successFullEjections);
+    updatePackageJson(dependency);
     commitEjection(config.COMMIT_MESSAGE);
     const { packageManager, lockFile } = detectPackageManager();
     const installCmd = `${packageManager} install`;

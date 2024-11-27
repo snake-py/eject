@@ -5,7 +5,7 @@ import { config } from './config.js';
 
 const cli = cac('eject');
 
-cli.command('[...dependencies]', 'Ejects a dependency from node_modules', {
+cli.command('<dependencies>', 'Ejects a dependency from node_modules', {
     allowUnknownOptions: true,
 })
     .option('-f, --force', 'Bypass git history check')
