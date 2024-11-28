@@ -4,6 +4,10 @@
   "description": "This package helps you to eject dependencies from node_modules easily",
   "main": "index.js",
   "type": "module",
+  "files": [
+    "dist/*",
+    "bin-entry.js"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
