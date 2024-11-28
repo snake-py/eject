@@ -1,3 +1,12 @@
+## [1.0.3](https://github.com/snake-py/eject/compare/v1.0.2...v1.0.3) (2024-11-28)
+
+
+### Bug Fixes
+
+* remove warning ([4469d50](https://github.com/snake-py/eject/commit/4469d502a295cc56ffa6eebbf8944327f5c65f51))
+
+
+
 ## [1.0.2](https://github.com/snake-py/eject/compare/v1.0.1...v1.0.2) (2024-11-28)
 
 
