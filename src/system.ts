@@ -128,19 +128,22 @@ function detectWorkspaceFile(currentDir: string = './', depth: number = 0) {
     return foundWorkspaceFiles[0];
 }
 
-function pnpm(dependency: string) {
+function pnpm() {
     const workspaceFile = detectWorkspaceFile();
     if (!workspaceFile) {
         fs.writeFileSync(
             './pnpm-workspace.yaml',
-            stringify({ packages: [`./ejected/${dependency}`] }),
+            stringify({ packages: [`ejected/*`] }),
         );
+        return true;
     } else {
         const workspace = parse(
             fs.readFileSync(resolve('./', workspaceFile), 'utf-8'),
         );
-        workspace.packages.push(`./ejected/${dependency}`);
+        if (workspace.packages.includes('ejected/*')) return false;
+        workspace.packages.push('ejected/*');
         fs.writeFileSync(resolve('./', workspaceFile), stringify(workspace));
+        return true;
     }
 }
 
@@ -148,13 +151,9 @@ const action = {
     pnpm,
 };
 
-export function dependencyManagerAction(
-    packageManager: string,
-    dependency: string,
-) {
+export function dependencyManagerAction(packageManager: string) {
     if (packageManager in action) {
-        action[packageManager as keyof typeof action](dependency);
-        return true;
+        return action[packageManager as keyof typeof action]();
     }
 
     return false;
