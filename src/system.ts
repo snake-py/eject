@@ -129,7 +129,6 @@ function detectWorkspaceFile(currentDir: string = './', depth: number = 0) {
 }
 
 function pnpm(dependency: string) {
-    // check if there is a workspace
     const workspaceFile = detectWorkspaceFile();
     if (!workspaceFile) {
         fs.writeFileSync(
