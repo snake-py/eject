@@ -50,7 +50,7 @@ export function eject(
     const { packageManager, lockFile } = detectPackageManager();
     updatePackageJson(dependency, packageManager === 'pnpm' ? 'link' : 'file');
     commitEjection(config.COMMIT_MESSAGE);
-    const needsToCommit = dependencyManagerAction(packageManager, dependency);
+    const needsToCommit = dependencyManagerAction(packageManager);
     if (needsToCommit) amendCommit();
     const installCmd = `${packageManager} install`;
     const installLog = chalk.bold(installCmd);
