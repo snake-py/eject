@@ -1,6 +1,3 @@
-> [!WARNING]
-> This package is work-in-progress and doesn't work yet.
-
 # Eject
 
 This package is written to eject dependencies from your project. It will copy all the files and folders to an `ejected` folder and remove it from node_modules. It will automatically update the package.json file an link the dependencies to the ejected folder.
