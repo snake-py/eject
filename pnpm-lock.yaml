@@ -14,6 +14,9 @@ importers:
       chalk:
         specifier: ^5.3.0
         version: 5.3.0
+      yaml:
+        specifier: ^2.6.1
+        version: 2.6.1
     devDependencies:
       '@brillout/release-me':
         specifier: ^0.4.2
@@ -817,6 +820,11 @@ packages:
   wordwrap@1.0.0:
     resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==}
 
+  yaml@2.6.1:
+    resolution: {integrity: sha512-7r0XPzioN/Q9kXBro/XPnA6kznR73DHq+GXh5ON7ZozRO6aMjbmiBuKste2wslTFkC5d1dw0GooOCepZXJ2SAg==}
+    engines: {node: '>= 14'}
+    hasBin: true
+
   yocto-queue@1.1.1:
     resolution: {integrity: sha512-b4JR1PFR10y1mKjhHY9LaGo6tmrgjit7hxVIeAmyMw3jegXR4dhYqLaQF5zMXZxY7tLpMyJeLjr1C4rLmkVe8g==}
     engines: {node: '>=12.20'}
@@ -1496,5 +1504,7 @@ snapshots:
       stackback: 0.0.2
 
   wordwrap@1.0.0: {}
+
+  yaml@2.6.1: {}
 
   yocto-queue@1.1.1: {}

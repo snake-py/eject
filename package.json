@@ -1,6 +1,6 @@
 {
   "name": "eject",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "This package helps you to eject dependencies from node_modules easily",
   "main": "index.js",
   "type": "module",
