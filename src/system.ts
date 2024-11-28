@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 import fs from 'fs';
 import assert from 'assert';
+import { parse, stringify } from 'yaml';
 
 export function updatePackageJson(
     ejectedDependency: string,
@@ -103,4 +104,59 @@ export function detectPackageManager(
     }
     assert(packageManager);
     return { packageManager, lockFile };
+}
+
+function detectWorkspaceFile(currentDir: string = './', depth: number = 0) {
+    if (depth > 20) {
+        return undefined;
+    }
+
+    const workspaceFiles = ['pnpm-workspace.yaml', 'yarn-workspace.json'];
+
+    const foundWorkspaceFiles = workspaceFiles.filter((workspaceFile) =>
+        fs.existsSync(resolve(currentDir, workspaceFile)),
+    );
+
+    if (foundWorkspaceFiles.length === 0) {
+        return detectWorkspaceFile(resolve(currentDir, '..'), depth + 1);
+    }
+
+    if (foundWorkspaceFiles.length > 1) {
+        throw new Error('Multiple workspace files found');
+    }
+
+    return foundWorkspaceFiles[0];
+}
+
+function pnpm(dependency: string) {
+    // check if there is a workspace
+    const workspaceFile = detectWorkspaceFile();
+    if (!workspaceFile) {
+        fs.writeFileSync(
+            './pnpm-workspace.yaml',
+            stringify({ packages: [`./ejected/${dependency}`] }),
+        );
+    } else {
+        const workspace = parse(
+            fs.readFileSync(resolve('./', workspaceFile), 'utf-8'),
+        );
+        workspace.packages.push(`./ejected/${dependency}`);
+        fs.writeFileSync(resolve('./', workspaceFile), stringify(workspace));
+    }
+}
+
+const action = {
+    pnpm,
+};
+
+export function dependencyManagerAction(
+    packageManager: string,
+    dependency: string,
+) {
+    if (packageManager in action) {
+        action[packageManager as keyof typeof action](dependency);
+        return true;
+    }
+
+    return false;
 }

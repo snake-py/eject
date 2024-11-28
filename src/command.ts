@@ -9,6 +9,7 @@ import {
 import { errorLog, infoLog, warnLog } from './log.js';
 import {
     copyDependency,
+    dependencyManagerAction,
     detectPackageManager,
     updatePackageJson,
 } from './system.js';
@@ -49,6 +50,8 @@ export function eject(
     const { packageManager, lockFile } = detectPackageManager();
     updatePackageJson(dependency, packageManager === 'pnpm' ? 'link' : 'file');
     commitEjection(config.COMMIT_MESSAGE);
+    const needsToCommit = dependencyManagerAction(packageManager, dependency);
+    if (needsToCommit) amendCommit();
     const installCmd = `${packageManager} install`;
     const installLog = chalk.bold(installCmd);
     console.log(`📦 Running ${installLog} to update ${chalk.bold(lockFile)}`);
