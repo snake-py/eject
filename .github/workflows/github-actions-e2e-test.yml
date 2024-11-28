@@ -1,0 +1,65 @@
+name: End To End Test
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  NPM-E2E-Test:
+    runs-on: ubuntu-latest
+    container:
+      image: snakepy/node:node18-latest
+    environment: test
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - run: npm install
+      - run: npm run build
+      - run: npm link
+      - name: "Setup repository"
+        run: |
+          cd ../
+          git config --global user.email ${{ secrets.GIT_EMAIL }}
+          git config --global user.name ${{ secrets.GIT_USER }}
+          git clone https://github.com/snake-py/eject-test.git 
+          cd eject-test 
+          git checkout npm
+          npm install 
+          git add -A 
+          git stash 
+          npx eject react --verbose
+      - name: "Run E2E Test"
+        run: npm run test:e2e:base --dependency="react" --dpath="../eject-test" --dmanager="npm"
+
+  PNPM-E2E-Test:
+    runs-on: ubuntu-latest
+    container:
+      image: snakepy/node:node18-latest
+    environment: test
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - run: npm install
+      - run: npm run build
+      - run: npm link
+      - name: "Setup repository"
+        run: |
+          cd ../
+          git config --global user.email ${{ secrets.GIT_EMAIL }}
+          git config --global user.name ${{ secrets.GIT_USER }}
+          git clone https://github.com/snake-py/eject-test.git 
+          cd eject-test 
+          git checkout pnpm
+          pnpm install 
+          git add -A 
+          git stash 
+          npx eject react --verbose
+      - name: "Run E2E Base Test"
+        run: npm run test:e2e:base --dependency="react" --dpath="../eject-test" --dmanager="pnpm"
+      - name: "Run E2E PNPM Test"
+        run: npm run test:e2e:pnpm --dependency="react" --dpath="../eject-test" --dmanager="pnpm"
