@@ -46,9 +46,9 @@ export function eject(
         console.log('❌ Ejected dependencies: ', chalk.bold(dependency));
         return;
     }
-    updatePackageJson(dependency);
-    commitEjection(config.COMMIT_MESSAGE);
     const { packageManager, lockFile } = detectPackageManager();
+    updatePackageJson(dependency, packageManager === 'pnpm' ? 'link' : 'file');
+    commitEjection(config.COMMIT_MESSAGE);
     const installCmd = `${packageManager} install`;
     const installLog = chalk.bold(installCmd);
     console.log(`📦 Running ${installLog} to update ${chalk.bold(lockFile)}`);

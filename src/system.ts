@@ -2,17 +2,22 @@ import { resolve } from 'path';
 import fs from 'fs';
 import assert from 'assert';
 
-export function updatePackageJson(ejectedDependency: string) {
+export function updatePackageJson(
+    ejectedDependency: string,
+    protocol: string = 'file',
+) {
     const packageJson = JSON.parse(
         fs.readFileSync(resolve('./package.json'), 'utf-8'),
     );
     packageJson['devDependencies'] = setPathAsVersion(
         packageJson['devDependencies'],
         ejectedDependency,
+        protocol,
     );
     packageJson['dependencies'] = setPathAsVersion(
         packageJson['dependencies'],
         ejectedDependency,
+        protocol,
     );
     fs.writeFileSync(
         resolve('./package.json'),
@@ -24,13 +29,14 @@ export function updatePackageJson(ejectedDependency: string) {
 function setPathAsVersion(
     dependencies: Record<string, string>,
     ejectedDependency: string,
+    protocol: string = 'file',
 ) {
     const updatedDependencies: Record<string, string> = {};
     for (const key in dependencies) {
         if (ejectedDependency !== key) {
             updatedDependencies[key] = dependencies[key] as string;
         } else {
-            updatedDependencies[key] = `link:./ejected/${key}`;
+            updatedDependencies[key] = `${protocol}:./ejected/${key}`;
         }
     }
     return updatedDependencies;
