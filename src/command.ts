@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { config } from './config.js';
+import { config } from './staticConfig.js';
 import {
     amendCommit,
     commitEjection,

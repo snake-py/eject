@@ -1,7 +1,7 @@
 import { cac } from 'cac';
 
 import { resolveCommand } from './command.js';
-import { config } from './config.js';
+import { config } from './staticConfig.js';
 
 const cli = cac('eject');
 
