@@ -2,6 +2,41 @@ import { resolve } from 'path';
 import fs from 'fs';
 import assert from 'assert';
 import { parse, stringify } from 'yaml';
+import chalk from 'chalk';
+import { execSync } from 'child_process';
+import { amendCommit } from './git.js';
+
+export function getDependencyPath(
+    dependency: string,
+    dependencyDir = './node_modules',
+) {
+    return resolve(dependencyDir, dependency);
+}
+
+export function downloadSource(dependency: string) {
+    // locate the dependency in node_modules
+    // if (!fs.existsSync('./ejected/tmp')) {
+    //     fs.mkdirSync('./ejected/tmp', { recursive: true });
+    // }
+    // const outStream = fs.createWriteStream(downloadPath, { flags: 'w' });
+    // console.log('Downloading...');
+    // const response = await fetch(repoUrl);
+    // if (!response.ok) {
+    //     throw new Error('Failed to download source code');
+    // }
+    // const stream = response.body;
+    // if (!stream) {
+    //     throw new Error('Failed to get response body');
+    // }
+    // // @ts-ignore
+    // await finished(Readable.fromWeb(stream).pipe(outStream));
+    // download the source code
+    // extract the source code
+    // copy the source code to ejected/dependency
+    // update the package.json
+    // commit the changes
+    // install the dependency
+}
 
 export function updatePackageJson(
     ejectedDependency: string,
@@ -44,7 +79,7 @@ function setPathAsVersion(
 }
 
 export function copyDependency(dependency: string) {
-    const dependencyPath = resolve('./node_modules', dependency);
+    const dependencyPath = getDependencyPath(dependency);
     if (!fs.existsSync(dependencyPath)) {
         throw new Error('Dependency not found in node_modules');
     }
@@ -103,7 +138,7 @@ export function detectPackageManager(
         packageManager = 'bun';
     }
     assert(packageManager);
-    return { packageManager, lockFile };
+    return { packageManager, lockFilePath: lockFile };
 }
 
 function detectWorkspaceFile(currentDir: string = './', depth: number = 0) {
@@ -157,4 +192,23 @@ export function dependencyManagerAction(packageManager: string) {
     }
 
     return false;
+}
+
+export function install(packageManager: string, lockFilePath: string) {
+    let installCmd = `${packageManager} install`;
+    if (process.env.GITHUB_ACTIONS && packageManager === 'pnpm') {
+        installCmd = 'pnpm install --no-frozen-lockfile';
+    }
+    const installLog = chalk.bold(installCmd);
+    console.log(
+        `📦 Running ${installLog} to update ${chalk.bold(lockFilePath)}`,
+    );
+    execSync(installCmd, { stdio: 'inherit' });
+    console.log(`✅ ${installLog} done`);
+    amendCommit();
+    console.log(
+        '➡️  Run',
+        chalk.bold('git show HEAD'),
+        'to see the ejected code',
+    );
 }

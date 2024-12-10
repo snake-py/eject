@@ -1,6 +1,11 @@
 import chalk from 'chalk';
 import { config } from './staticConfig.js';
 import {
+    getParsedDependencyConfigs,
+    getPartialEjections,
+    TDependencyEjectionConfig,
+} from './config.js';
+import {
     amendCommit,
     commitEjection,
     isGitHistoryClean,
@@ -11,9 +16,11 @@ import {
     copyDependency,
     dependencyManagerAction,
     detectPackageManager,
+    downloadSource,
+    getDependencyPath,
+    install,
     updatePackageJson,
 } from './system.js';
-import { execSync } from 'child_process';
 import type { TCommandOptions } from './types.js';
 import { exit } from 'process';
 import { exitCodes } from './exits.js';
@@ -23,6 +30,7 @@ export function resolveCommand(
     partial: string | undefined,
     options: TCommandOptions,
 ) {
+    console.log('\n');
     if (options.verbose) {
         console.log({
             dependency,
@@ -32,8 +40,19 @@ export function resolveCommand(
     }
     prerequisitesMet(options);
 
+    const dependencyPath = getDependencyPath(dependency);
+
     if (options.list) {
-        infoLog('Listing dependencies');
+        const configs = getPartialEjections(dependency, dependencyPath);
+        infoLog('Available partial ejections for', dependency, '\n');
+        for (const config of configs) {
+            console.log('   -', chalk.bold(config));
+        }
+        console.log(
+            `\nUse`,
+            chalk.bold(`npx eject ${dependency} <partial>`),
+            `to eject a specific partial \n`,
+        );
         return;
     }
 
@@ -42,11 +61,13 @@ export function resolveCommand(
         return;
     }
 
-    if (partial) {
-        ejectSourcePartially(dependency, partial, options);
-    } else {
-        ejectSource(dependency, options);
-    }
+    const configs = getParsedDependencyConfigs(dependency, dependencyPath);
+    ejectSource(dependency, options, configs);
+
+    // if (partial) {
+    //     ejectSourcePartially(dependency, partial, options);
+    // } else {
+    // }
 }
 
 function prerequisitesMet(options: TCommandOptions) {
@@ -64,46 +85,43 @@ function prerequisitesMet(options: TCommandOptions) {
     }
 }
 
+/**
+ * This ejection function is used to eject a dependency from node_modules and then use the package manager to install it as a local dependency.
+ * @param dependency
+ * @param options
+ * @returns
+ */
 function eject(dependency: string, options: TCommandOptions) {
-    let successfulEjected = false;
     try {
         copyDependency(dependency);
-        successfulEjected = true;
+        console.log('✅ Ejected dependencies:', chalk.bold(dependency));
     } catch (error) {
         if (options.verbose) {
             errorLog('Error ejecting dependency:', dependency);
             console.error(error);
         }
+        console.log('❌ Ejected dependencies: ', chalk.bold(dependency));
+        return exitCodes.EJECTION_FAILED;
     }
 
-    if (successfulEjected) {
-        console.log('✅ Ejected dependencies:', chalk.bold(dependency));
-    } else {
-        console.log('❌ Ejected dependencies: ', chalk.bold(dependency));
-        return 150;
-    }
-    const { packageManager, lockFile } = detectPackageManager();
+    const { packageManager, lockFilePath } = detectPackageManager();
     updatePackageJson(dependency, packageManager === 'pnpm' ? 'link' : 'file');
     commitEjection(config.COMMIT_MESSAGE);
+
+    // some package managers require custom actions after ejecting
     const needsToCommit = dependencyManagerAction(packageManager);
     if (needsToCommit) amendCommit();
-    let installCmd = `${packageManager} install`;
-    if (process.env.GITHUB_ACTIONS && packageManager === 'pnpm') {
-        installCmd = 'pnpm install --no-frozen-lockfile';
-    }
-    const installLog = chalk.bold(installCmd);
-    console.log(`📦 Running ${installLog} to update ${chalk.bold(lockFile)}`);
-    execSync(installCmd, { stdio: 'inherit' });
-    console.log(`✅ ${installLog} done`);
-    amendCommit();
-    console.log(
-        '➡️  Run',
-        chalk.bold('git show HEAD'),
-        'to see the ejected code',
-    );
+
+    install(packageManager, lockFilePath);
 }
 
-export function ejectSource(dependency: string, options: TCommandOptions) {}
+export function ejectSource(
+    dependency: string,
+    options: TCommandOptions,
+    configs: TDependencyEjectionConfig,
+) {
+    downloadSource(dependency);
+}
 
 export function ejectSourcePartially(
     dependency: string,

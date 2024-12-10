@@ -10,4 +10,5 @@ export const exitCodes = {
     /** Custom Exit Codes */
     GIT_NOT_INSTALLED: 129,
     GIT_HISTORY_NOT_CLEAN: 130,
+    EJECTION_FAILED: 131,
 };
