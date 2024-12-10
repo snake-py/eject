@@ -14,10 +14,14 @@ import {
     updatePackageJson,
 } from './system.js';
 import { execSync } from 'child_process';
+import type { TCommandOptions } from './types.js';
+import { exit } from 'process';
+import { exitCodes } from './exits.js';
 
-export function eject(
+export function resolveCommand(
     dependency: string,
-    options: { force: boolean; verbose: boolean },
+    partial: string | undefined,
+    options: TCommandOptions,
 ) {
     if (options.verbose) {
         console.log({
@@ -26,19 +30,41 @@ export function eject(
             isCI: process.env.GITHUB_ACTIONS,
         });
     }
+    prerequisitesMet(options);
 
+    if (options.list) {
+        infoLog('Listing dependencies');
+        return;
+    }
+
+    if (options.noSource) {
+        eject(dependency, options);
+        return;
+    }
+
+    if (partial) {
+        ejectSourcePartially(dependency, partial, options);
+    } else {
+        ejectSource(dependency, options);
+    }
+}
+
+function prerequisitesMet(options: TCommandOptions) {
     if (!options.force && !isGitInstalled()) {
         warnLog(
             'Git is not installed, please install git or use --force to bypass git check',
         );
-        return;
+        exit(exitCodes.GIT_NOT_INSTALLED);
     }
     if (!options.force && !isGitHistoryClean()) {
         warnLog(
             'Please commit your changes before ejecting dependencies or use --force to bypass git history',
         );
-        return;
+        exit(exitCodes.GIT_HISTORY_NOT_CLEAN);
     }
+}
+
+function eject(dependency: string, options: TCommandOptions) {
     let successfulEjected = false;
     try {
         copyDependency(dependency);
@@ -76,3 +102,11 @@ export function eject(
         'to see the ejected code',
     );
 }
+
+export function ejectSource(dependency: string, options: TCommandOptions) {}
+
+export function ejectSourcePartially(
+    dependency: string,
+    partial: string,
+    options: TCommandOptions,
+) {}

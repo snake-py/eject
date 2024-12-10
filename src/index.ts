@@ -1,16 +1,17 @@
 import { cac } from 'cac';
 
-import { eject } from './command.js';
+import { resolveCommand } from './command.js';
 import { config } from './config.js';
 
 const cli = cac('eject');
 
-cli.command('<dependencies>', 'Ejects a dependency from node_modules', {
+cli.command('<dependency> [partial]', 'Ejects a dependency from node_modules', {
     allowUnknownOptions: true,
 })
     .option('-f, --force', 'Bypass git history check')
     .option('-v, --verbose', 'Verbose output')
-    .action(eject);
+    .option('--no-source', 'Do not copy source files')
+    .action(resolveCommand);
 
 cli.help();
 cli.version(config.projectVersion);
