@@ -5,6 +5,8 @@ import { parse, stringify } from 'yaml';
 import chalk from 'chalk';
 import { execSync } from 'child_process';
 import { amendCommit } from './git.js';
+import { Readable } from 'stream';
+import { finished } from 'stream/promises';
 
 export function getDependencyPath(
     dependency: string,
@@ -13,29 +15,25 @@ export function getDependencyPath(
     return resolve(dependencyDir, dependency);
 }
 
-export function downloadSource(dependency: string) {
-    // locate the dependency in node_modules
-    // if (!fs.existsSync('./ejected/tmp')) {
-    //     fs.mkdirSync('./ejected/tmp', { recursive: true });
-    // }
-    // const outStream = fs.createWriteStream(downloadPath, { flags: 'w' });
-    // console.log('Downloading...');
-    // const response = await fetch(repoUrl);
-    // if (!response.ok) {
-    //     throw new Error('Failed to download source code');
-    // }
-    // const stream = response.body;
-    // if (!stream) {
-    //     throw new Error('Failed to get response body');
-    // }
-    // // @ts-ignore
-    // await finished(Readable.fromWeb(stream).pipe(outStream));
-    // download the source code
-    // extract the source code
-    // copy the source code to ejected/dependency
-    // update the package.json
-    // commit the changes
-    // install the dependency
+export async function downloadSource(dependency: string, source: string) {
+    if (!fs.existsSync('./ejected/tmp')) {
+        fs.mkdirSync('./ejected/tmp', { recursive: true });
+    }
+    const downloadPath = resolve('./ejected/tmp', dependency + '.zip');
+
+    const outStream = fs.createWriteStream(downloadPath, { flags: 'w' });
+    console.log('Downloading...');
+    const response = await fetch(source);
+    if (!response.ok) {
+        throw new Error('Failed to download source code');
+    }
+    const stream = response.body;
+    if (!stream) {
+        throw new Error('Failed to get response body');
+    }
+    // @ts-ignore
+    await finished(Readable.fromWeb(stream).pipe(outStream));
+    return downloadPath;
 }
 
 export function updatePackageJson(

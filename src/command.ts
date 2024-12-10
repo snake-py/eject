@@ -41,7 +41,6 @@ export function resolveCommand(
     prerequisitesMet(options);
 
     const dependencyPath = getDependencyPath(dependency);
-
     if (options.list) {
         const configs = getPartialEjections(dependency, dependencyPath);
         infoLog('Available partial ejections for', dependency, '\n');
@@ -62,6 +61,7 @@ export function resolveCommand(
     }
 
     const configs = getParsedDependencyConfigs(dependency, dependencyPath);
+    console.log({ configs });
     ejectSource(dependency, options, configs);
 
     // if (partial) {
@@ -120,7 +120,13 @@ export function ejectSource(
     options: TCommandOptions,
     configs: TDependencyEjectionConfig,
 ) {
-    downloadSource(dependency);
+    // download the source code
+    const downloadPath = downloadSource(dependency, configs.source);
+    // extract the source code
+    // copy the source code to ejected/dependency
+    // update the package.json
+    // commit the changes
+    // install the dependency
 }
 
 export function ejectSourcePartially(
